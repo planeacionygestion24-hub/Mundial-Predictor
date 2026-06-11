@@ -1,111 +1,75 @@
-// app/page.tsx
-import Link from "next/link";
-import { upcomingFixtures } from "@/lib/data/queries";
-import { ProbBar } from "@/components/ProbBar";
-import { kickoff, pct, runStamp } from "@/lib/format";
-import { latestSimulation } from "@/lib/data/simulate";
-import { ChampionBoard } from "@/components/ChampionBoard";
+export const runtime = 'nodejs';
 
-export const dynamic = "force-dynamic";
+import Link from "next/link";
+import { db } from "@/db/client";
+import { matches } from "@/db/schema";
+import { desc } from "drizzle-orm";
 
 export default async function Home() {
-  const [fixturesList, sim] = await Promise.all([upcomingFixtures(), latestSimulation()]);
-
-  if (fixturesList.length === 0) {
-    return (
-      <div className="panel p-8">
-        <h1 className="display text-3xl">Sin partidos en la base</h1>
-        <p className="mt-3" style={{ color: "var(--muted)" }}>
-          Corre <span className="mono">pnpm seed</span> con tu APIFOOTBALL_KEY para cargar el
-          fixture real, o <span className="mono">pnpm seed:demo</span> para ver la interfaz con
-          datos de ejemplo.
-        </p>
-      </div>
-    );
-  }
-
-  const lastRun = fixturesList.find((f) => f.runAt)?.runAt;
+  // Traemos los partidos desde la base de datos Postgres de Vercel
+  const allMatches = await db.select().from(matches).orderBy(desc(matches.date));
 
   return (
-    <div>
-      {sim && (
-        <section className="panel mb-6">
-          <header className="hairline-b flex items-baseline justify-between px-4 py-2">
-            <span className="eyebrow">Proyección de campeón</span>
-            <span className="eyebrow">
-              {sim.iterations.toLocaleString("es-CO")} simulaciones ·{" "}
-              <Link href="/grupos" className="underline">
-                ver grupos
-              </Link>
-            </span>
-          </header>
-          <ChampionBoard sim={sim} />
-        </section>
-      )}
+    <main className="flex min-h-screen flex-col items-center justify-between p-6 bg-gradient-to-b from-blue-900 to-indigo-950 text-white">
+      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex flex-col">
+        
+        {/* Encabezado */}
+        <header className="text-center my-8">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">
+            🏆 Predictor Mundialista
+          </h1>
+          <p className="mt-2 text-lg text-blue-200">
+            Guarda tus pronósticos y compite con tus amigos
+          </p>
+        </header>
 
-      <div className="mb-5 flex items-end justify-between">
-        <h1 className="display text-4xl">Próximos partidos</h1>
-        {lastRun && (
-          <span className="eyebrow">Última corrida {runStamp(lastRun)}</span>
-        )}
-      </div>
+        {/* Lista de Partidos */}
+        <div className="w-full max-w-2xl bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/10">
+          <h2 className="text-xl font-bold mb-4 border-b border-white/20 pb-2 flex justify-between items-center">
+            <span>⚽ Próximos Partidos</span>
+            <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full animate-pulse">En vivo</span>
+          </h2>
 
-      <div className="panel">
-        {fixturesList.map((f, i) => {
-          const m = f.prediction?.markets;
-          const fav =
-            m === undefined
-              ? null
-              : m.oneXTwo.home >= m.oneXTwo.away
-                ? { name: f.home.name, p: m.oneXTwo.home }
-                : { name: f.away.name, p: m.oneXTwo.away };
-          return (
-            <Link
-              key={f.id}
-              href={`/match/${f.id}`}
-              className={`block px-4 py-3 no-underline transition-colors hover:bg-[var(--panel-2)] ${
-                i < fixturesList.length - 1 ? "hairline-b" : ""
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <span className="eyebrow w-28 shrink-0">{kickoff(f.date)}</span>
-                <span className="display flex-1 text-lg">
-                  {f.home.name} <span style={{ color: "var(--muted)" }}>vs</span> {f.away.name}
-                </span>
-                {m && fav && (
-                  <>
-                    <div className="hidden w-40 sm:block">
-                      <ProbBar
-                        home={m.oneXTwo.home}
-                        draw={m.oneXTwo.draw}
-                        away={m.oneXTwo.away}
-                        height={8}
-                      />
-                    </div>
-                    <span className="mono w-24 shrink-0 text-right text-sm">
-                      <span style={{ color: "var(--accent)" }}>{pct(fav.p)}%</span>{" "}
-                      <span className="eyebrow">{fav.name.slice(0, 3)}</span>
-                    </span>
-                  </>
-                )}
-                {!m && <span className="eyebrow">Sin predicción</span>}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+          {allMatches.length === 0 ? (
+            <div className="text-center py-8 text-blue-200">
+              <p>No hay partidos registrados en la base de datos todavía.</p>
+              <p className="text-xs mt-2 opacity-60">Usa el panel de administración para añadir partidos.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {allMatches.map((match) => (
+                <div 
+                  key={match.id} 
+                  className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all"
+                >
+                  <div className="flex-1 text-right font-semibold pr-4">{match.homeTeam}</div>
+                  <div className="px-4 py-1 bg-blue-600 rounded-lg font-bold text-center min-w-[60px]">
+                    VS
+                  </div>
+                  <div className="flex-1 text-left font-semibold pl-4">{match.awayTeam}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-      <div className="mt-3 flex gap-4">
-        <span className="flex items-center gap-2 text-xs" style={{ color: "var(--muted)" }}>
-          <i className="inline-block h-2 w-4" style={{ background: "var(--accent)" }} /> Local
-        </span>
-        <span className="flex items-center gap-2 text-xs" style={{ color: "var(--muted)" }}>
-          <i className="inline-block h-2 w-4" style={{ background: "var(--draw)" }} /> Empate
-        </span>
-        <span className="flex items-center gap-2 text-xs" style={{ color: "var(--muted)" }}>
-          <i className="inline-block h-2 w-4" style={{ background: "var(--away)" }} /> Visitante
-        </span>
+        {/* Botonera de Navegación */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-2xl justify-center">
+          <Link 
+            href="/predicciones" 
+            className="flex-1 text-center bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-slate-950 font-bold py-3 px-6 rounded-xl shadow-lg transform active:scale-95 transition-all"
+          >
+            🎯 Mis Predicciones
+          </Link>
+          <Link 
+            href="/admin" 
+            className="text-center bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl border border-white/10 transition-all text-sm flex items-center justify-center"
+          >
+            ⚙️ Panel Admin
+          </Link>
+        </div>
+
       </div>
-    </div>
+    </main>
   );
 }
