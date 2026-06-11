@@ -1,0 +1,85 @@
+// lib/model/ranks.ts
+// Ranking FIFA aproximado (corte: fines de 2025). Es un INPUT del modelo, no data viva:
+// edítalo cuando FIFA publique actualización. Claves = nombre en inglés tal como lo
+// devuelve API-Football. Equipos no listados usan DEFAULT_RANK.
+
+export const DEFAULT_RANK = 40;
+
+export const FIFA_RANKS: Record<string, number> = {
+  Spain: 1,
+  Argentina: 2,
+  France: 3,
+  England: 4,
+  Brazil: 5,
+  Portugal: 6,
+  Netherlands: 7,
+  Belgium: 8,
+  Germany: 9,
+  Croatia: 10,
+  Morocco: 11,
+  Italy: 12,
+  Colombia: 13,
+  USA: 14,
+  Mexico: 15,
+  Uruguay: 16,
+  Switzerland: 17,
+  Japan: 18,
+  Senegal: 19,
+  Denmark: 20,
+  Iran: 21,
+  "South Korea": 22,
+  Ecuador: 23,
+  Austria: 24,
+  Australia: 25,
+  Canada: 26,
+  Ukraine: 27,
+  Turkey: 28,
+  Sweden: 29,
+  Wales: 30,
+  Russia: 31,
+  Serbia: 32,
+  Egypt: 33,
+  Panama: 34,
+  Algeria: 35,
+  Hungary: 36,
+  Norway: 37,
+  Czechia: 38,
+  Greece: 39,
+  "Ivory Coast": 40,
+  Peru: 41,
+  Nigeria: 42,
+  Scotland: 43,
+  Poland: 44,
+  Venezuela: 45,
+  Romania: 46,
+  Slovakia: 47,
+  Paraguay: 48,
+  Tunisia: 49,
+  "Costa Rica": 50,
+  Cameroon: 51,
+  Chile: 52,
+  Qatar: 53,
+  Mali: 54,
+  Uzbekistan: 57,
+  "Saudi Arabia": 59,
+  Iraq: 58,
+  Jordan: 64,
+  Ghana: 66,
+  "South Africa": 61,
+  "Cape Verde Islands": 70,
+  "Cape Verde": 70,
+  Honduras: 68,
+  Jamaica: 63,
+  "New Zealand": 86,
+  Curacao: 82,
+  Haiti: 84,
+  "Congo DR": 60,
+  Bolivia: 76,
+};
+
+export function rankFor(teamName: string): number {
+  return FIFA_RANKS[teamName] ?? DEFAULT_RANK;
+}
+
+/** Anfitriones del Mundial 2026: juegan su fase de grupos en casa. */
+export const HOST_NATIONS = new Set(["Mexico", "USA", "Canada"]);
