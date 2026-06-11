@@ -6,28 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "db:migrate": "tsx scripts/migrate.ts",
-    "seed": "tsx scripts/seed.ts",
-    "seed:demo": "tsx scripts/demo.ts",
-    "cron:run": "tsx scripts/cron.ts",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@libsql/client": "^0.15.0",
-    "drizzle-orm": "^0.44.0",
-    "next": "^15.3.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@libsql/client": "^0.6.0",
+    "drizzle-orm": "^0.30.10",
+    "next": "14.2.3",
+    "postgres": "^3.4.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.0",
-    "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "tailwindcss": "^4.1.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.8.0",
-    "vitest": "^3.1.0"
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "drizzle-kit": "^0.20.17",
+    "typescript": "^5.4.5"
   }
 }
