@@ -1,8 +1,8 @@
 export const runtime = 'nodejs';
 
 import Link from "next/link";
-import { db } from "@/db/client";
-import { matches } from "@/db/schema";
+import { db } from "../lib/db/client";
+import { matches } from "../lib/db/schema";
 import { desc } from "drizzle-orm";
 
 export default async function Home() {
