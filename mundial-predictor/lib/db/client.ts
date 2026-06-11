@@ -5,7 +5,7 @@ import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-// Verificamos si estamos en producción en Vercel
+// 1. Verificamos si estamos en producción en Vercel usando la base de datos Postgres que creaste
 const isProd = process.env.NODE_ENV === "production" || process.env.DATABASE_URL;
 
 let dbInstance;
