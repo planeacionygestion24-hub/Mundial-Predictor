@@ -1,7 +1,6 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  serverExternalPackages: ["@libsql/client"],
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  /* opciones de configuración aquí si las necesitas */
 };
 
 export default nextConfig;
